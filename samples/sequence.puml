@@ -1,0 +1,37 @@
+@startuml
+participant User
+
+User -> A: DoWork
+activate A
+
+A -> B: << createRequest >>
+activate B
+
+B -> C: DoWork
+activate C
+C --> B: WorkDone
+destroy C
+
+B --> A: RequestCreated
+deactivate B
+
+A -> User: Done
+deactivate A
+
+@enduml
+
+@startuml
+
+Alice -> Bob : message 1
+Alice -> Bob : message 2
+
+newpage
+
+Alice -> Bob : message 3
+Alice -> Bob : message 4
+
+newpage A title for the\nlast page
+
+Alice -> Bob : message 5
+Alice -> Bob : message 6
+@enduml

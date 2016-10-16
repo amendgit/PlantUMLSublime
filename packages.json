@@ -1,0 +1,12 @@
+{
+	"schema_version": "1.2",
+	"packages": [
+		{
+			"name": "PlantUMLPreview",
+			"description": "A Plug-In for Sublime Text 3 To Preview PlantUML",
+			"author": "amendgit",
+			"homepage": "https://github.com/amendgit/PlantUMLPreview",
+			"last_modified": "2016-10-16"
+		}
+	]
+}

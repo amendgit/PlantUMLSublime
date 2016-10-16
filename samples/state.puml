@@ -1,0 +1,27 @@
+State diagram
+
+@startuml
+
+[*]       --> proposed  : external \n request \n registered in \n host system
+proposed  --> active    : request \n accepted
+proposed  --> rejected  : operator \n rejected \n request
+proposed  --> cancelled : request \n cancelled \n by external \n system
+active    --> resolved  : new data \n assigned
+active    --> proposed  : request \n reverted
+active    --> cancelled : request \n cancelled \n by external \n system \n or by \n power-user, \n data \n reverted
+active    --> rejected  : no tech \n capability
+resolved  --> completed : assigned data \n confirmed
+resolved  --> active    : in case of correction
+resolved  --> cancelled : assigned data \n reverted
+completed --> [*]
+rejected  --> [*]
+cancelled --> [*]
+
+proposed  : New
+active    : In Work
+resolved  : Processed
+completed : Confirmed
+cancelled : Cancelled
+rejected  : Rejected
+
+@enduml
