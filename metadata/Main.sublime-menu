@@ -32,6 +32,11 @@
                             },
                             {
                                 "command": "open_file",
+                                "args": {"file": "${packages}/PlantUMLSublime/samples/class.puml"},
+                                "caption": "class"
+                            },
+                            {
+                                "command": "open_file",
                                 "args": {"file": "${packages}/PlantUMLSublime/samples/sequence.puml"},
                                 "caption": "sequence"
                             },

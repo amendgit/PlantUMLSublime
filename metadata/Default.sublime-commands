@@ -1,6 +1,10 @@
 [
   {
-    "caption": "PlantUMLPreview: Generate Diagrams for PlantUML",
+    "caption": "PlantUMLSublime: Preview",
     "command": "plantuml_preview"
+  },
+  {
+    "caption": "PlantUMLSublime: Export",
+    "command": "plantuml_export"
   }
 ]
