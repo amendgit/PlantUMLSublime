@@ -4,6 +4,7 @@ from threading import Thread
 import subprocess
 import os.path as path
 import os
+import tempfile
 
 g_plugin_settings = load_settings('PlantUMLSublime.sublime-settings')
 
@@ -24,23 +25,22 @@ def make_diagram_filepath(uml_filepath, suffix=None, format='png'):
         diagram_filepath = path.splitext(uml_filepath)[0] + '.' + format
     return diagram_filepath
 
-def async_generate(uml_text, diagram_filepath, output_format='png'):
-    t = Thread(target=sync_generate, args=(uml_text, diagram_filepath, output_format,))
+def async_generate(uml_text, diagram_fd, output_format='png'):
+    t = Thread(target=sync_generate, args=(uml_text, diagram_fd, output_format,))
     t.daemon = True
     t.start()
 
-def sync_generate(uml_text, diagram_filepath, output_format):
-    diagram_fd = open(diagram_filepath, 'wb')
+def sync_generate(uml_text, diagram_fd, output_format):
     arg_format = '-t' + output_format
     cmd = ['java', '-jar', plantuml_jar_path(), '-pipe', arg_format, '-charset', 'UTF-8']
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=diagram_fd)
     p.communicate(input=uml_text.encode('UTF-8'))
     if p.returncode != 0:
         if output_format == 'html': error_message('PlantUMLSublime: export html only supported by class diagram.')
-        os.remove(diagram_filepath)
+        os.remove(diagram_fd.name)
         return
     if output_format in ['txt', 'png', 'html']:
-        open_diagram_in_sublime(diagram_filepath)
+        open_diagram_in_sublime(diagram_fd.name)
 
 def uml_texts_from_view(view):
     uml_regions, sel = [], view.sel()
@@ -63,8 +63,8 @@ class plantuml_preview(TextCommand):
         for index, uml_text in enumerate(uml_texts):
             uml_filepath = self.view.file_name()
             suffix = len(uml_texts) != 1 and str(index+1) or None
-            diagram_filepath = make_diagram_filepath(uml_filepath, suffix)
-            async_generate(uml_text, diagram_filepath)
+            temp_filepath = tempfile.mkstemp('.png')[1]
+            async_generate(uml_text, open(temp_filepath, 'wb'))
 
     def isEnabled(self):
         return True
@@ -82,8 +82,8 @@ class plantuml_export(TextCommand):
         for index, uml_text in enumerate(uml_texts):
             uml_filepath = self.view.file_name()
             suffix = len(uml_texts) != 1 and str(index+1) or None
-            diagram_filepath = make_diagram_filepath(uml_filepath, suffix, output_format)
-            async_generate(uml_text, diagram_filepath, output_format)
+            diagram_filepath = make_diagram_filepath(uml_filepath, suffix)
+            async_generate(uml_text, open(diagram_filepath, 'wb'))
 
     def isEnabled(self):
         return True
