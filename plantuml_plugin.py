@@ -33,6 +33,7 @@ def async_generate(uml_text, diagram_fd, output_format='png'):
 def sync_generate(uml_text, diagram_fd, output_format):
     arg_format = '-t' + output_format
     cmd = ['java', '-jar', plantuml_jar_path(), '-pipe', arg_format, '-charset', 'UTF-8']
+    print('cmd >', cmd)
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=diagram_fd)
     p.communicate(input=uml_text.encode('UTF-8'))
     if p.returncode != 0:
@@ -82,8 +83,8 @@ class plantuml_export(TextCommand):
         for index, uml_text in enumerate(uml_texts):
             uml_filepath = self.view.file_name()
             suffix = len(uml_texts) != 1 and str(index+1) or None
-            diagram_filepath = make_diagram_filepath(uml_filepath, suffix)
-            async_generate(uml_text, open(diagram_filepath, 'wb'))
+            diagram_filepath = make_diagram_filepath(uml_filepath, suffix, output_format)
+            async_generate(uml_text, open(diagram_filepath, 'wb'), output_format)
 
     def isEnabled(self):
         return True
